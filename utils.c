@@ -6,7 +6,7 @@
 /*   By: yel-mens <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 11:14:53 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/17 11:19:27 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/12/19 14:08:58 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ char	*ft_substr(const char *str, unsigned int start, size_t len)
 {
 	size_t	i;
 	char	*sub_str;
+	char	character;
 
 	if (!str)
 		return (NULL);
@@ -65,7 +66,10 @@ char	*ft_substr(const char *str, unsigned int start, size_t len)
 		return (NULL);
 	i = 0;
 	while (i < len)
-		sub_str[i++] = str[start++];
+	{
+		character = str[start++];
+		sub_str[i++] = character;
+	}
 	sub_str[i] = 0;
 	return (sub_str);
 }

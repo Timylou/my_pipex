@@ -5,32 +5,35 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: yel-mens <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/17 17:24:37 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/17 17:57:37 by yel-mens         ###   ########.fr       */
+/*   Created: 2024/12/19 12:48:11 by yel-mens          #+#    #+#             */
+/*   Updated: 2024/12/19 12:48:11 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int	ft_open_files(int fd[2], char **argv)
+void	ft_child_file(int end[2], char **argv)
 {
-	int	infile;
-	int	outfile;
+	int	fd;
 
-	infile = open(argv[1], O_RDONLY);
-	if (infile < 0)
+	close(end[0]);
+	fd = open(argv[1], O_RDONLY);
+	if (fd < 0)
 	{
-		perror("Cannot open infile");
-		return (0);
+		perror(argv[1]);
+		exit(EXIT_FAILURE);
 	}
-	outfile = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (outfile < 0)
+	if (dup2(fd, STDIN_FILENO) < 0)
 	{
-		perror("Cannot open outfile");
-		close(infile);
-		return (0);
+		perror("dup2 fd -> stdin");
+		close(fd);
+		exit(EXIT_FAILURE);
 	}
-	fd[0] = infile;
-	fd[1] = outfile;
-	return (1);
+	close(fd);
+	if (dup2(end[1], STDOUT_FILENO) < 0)
+	{
+		perror("dup2 end[1] -> stdout");
+		exit(EXIT_FAILURE);
+	}
+	close(end[1]);
 }

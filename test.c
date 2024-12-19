@@ -6,14 +6,18 @@
 /*   By: yel-mens <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 14:34:47 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/17 17:31:17 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/12/19 14:14:09 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 #include <stdio.h>
 
-int	main(int argc, char **argv, char **envp)
+void	lol(void)
+{
+	return ;
+}
+/*int	main(int argc, char **argv, char **envp)
 {
 	int		i;
 	char	**path;
@@ -51,4 +55,4 @@ int	main(int argc, char **argv, char **envp)
 	for (int j=0; path[j]; j++)
 		free(path[j]);
 	free(path);
-}
+}*/
