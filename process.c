@@ -6,7 +6,7 @@
 /*   By: yel-mens <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 11:53:30 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/19 14:16:11 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/12/20 00:09:14 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,14 @@ static void	ft_exec(char *cmd, char *cmd_path, char **env)
 	free(cmd_path);
 	if (execve(complete_path, args, env) < 0)
 	{
+		free(args);
 		free(complete_path);
 		perror("execve on child process");
 		exit(EXIT_FAILURE);
 	}
+	(void) env;
+	ft_free_array(args);
+	free(complete_path);
 }
 
 void	ft_child_process(int end[2], char **argv, char **env)
@@ -54,12 +58,12 @@ void	ft_parent_process(int end[2], char **argv, char **env)
 {
 	char	*cmd;
 
-	ft_child_file(end, argv);
-	cmd = ft_get_cmd_path(argv[2], env);
+	ft_parent_file(end, argv);
+	cmd = ft_get_cmd_path(argv[3], env);
 	if (!cmd)
 	{
 		perror("Did not find path to this command");
 		exit(EXIT_FAILURE);
 	}
-	ft_exec(argv[2], cmd, env);
+	ft_exec(argv[3], cmd, env);
 }

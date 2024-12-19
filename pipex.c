@@ -19,7 +19,7 @@ int	main(int argc, char **argv, char **env)
 
 	if (argc != 5)
 		return (EXIT_FAILURE);
-	if (pipe(end) == -1)
+	if (pipe(end) < 0)
 		return (EXIT_FAILURE);
 	id = fork();
 	if (!id)
