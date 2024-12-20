@@ -16,6 +16,7 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <stdio.h>
+# include <sys/wait.h>
 
 /* * * * * *
  *	utils  *
@@ -33,7 +34,7 @@ char	*ft_strjoin(char const *s1, char const *s2);
 
 void	ft_child_process(int fd[2], char **argv, char **env);
 void	ft_child_file(int end[2], char **argv);
-void	ft_parent_process(int fd[2], char **argv, char **env);
+void	ft_parent_process(int fd[2], pid_t pid, char **argv, char **env);
 void	ft_parent_file(int end[2], char **argv);
 char	*ft_get_cmd_path(char *cmd, char **env);
 char	*ft_free_array(char **array);

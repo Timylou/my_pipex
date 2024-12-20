@@ -54,10 +54,18 @@ void	ft_child_process(int end[2], char **argv, char **env)
 	ft_exec(argv[2], cmd, env);
 }
 
-void	ft_parent_process(int end[2], char **argv, char **env)
+void	ft_parent_process(int end[2], pid_t pid, char **argv, char **env)
 {
 	char	*cmd;
+	int		status;
 
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status) && WEXITSTATUS(status))
+	{
+		close(end[0]);
+		close(end[1]);
+		exit(EXIT_FAILURE);
+	}
 	ft_parent_file(end, argv);
 	cmd = ft_get_cmd_path(argv[3], env);
 	if (!cmd)

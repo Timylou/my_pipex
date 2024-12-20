@@ -14,17 +14,17 @@
 
 int	main(int argc, char **argv, char **env)
 {
-	int	end[2];
-	int	id;
+	int		end[2];
+	pid_t	pid;
 
 	if (argc != 5)
 		return (EXIT_FAILURE);
 	if (pipe(end) < 0)
 		return (EXIT_FAILURE);
-	id = fork();
-	if (!id)
+	pid = fork();
+	if (!pid)
 		ft_child_process(end, argv, env);
 	else
-		ft_parent_process(end, argv, env);
+		ft_parent_process(end, pid, argv, env);
 	return (EXIT_SUCCESS);
 }
