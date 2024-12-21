@@ -6,7 +6,7 @@
 /*   By: yel-mens <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 11:53:30 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/20 00:09:14 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/12/21 15:41:03 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,38 +40,30 @@ static void	ft_exec(char *cmd, char *cmd_path, char **env)
 	free(complete_path);
 }
 
-void	ft_child_process(int end[2], char **argv, char **env)
+void	ft_child_process(int i, char **argv, char **env)
 {
 	char	*cmd;
 
-	ft_child_file(end, argv);
-	cmd = ft_get_cmd_path(argv[2], env);
+	cmd = ft_get_cmd_path(argv[i], env);
 	if (!cmd)
 	{
 		perror("Did not find path to this command");
 		exit(EXIT_FAILURE);
 	}
-	ft_exec(argv[2], cmd, env);
+	ft_exec(argv[i], cmd, env);
+	exit(EXIT_SUCCESS);
+
 }
 
-void	ft_parent_process(int end[2], pid_t pid, char **argv, char **env)
+void	ft_parent_process(int i, char **argv, char **env)
 {
 	char	*cmd;
-	int		status;
 
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status) && WEXITSTATUS(status))
-	{
-		close(end[0]);
-		close(end[1]);
-		exit(EXIT_FAILURE);
-	}
-	ft_parent_file(end, argv);
-	cmd = ft_get_cmd_path(argv[3], env);
+	cmd = ft_get_cmd_path(argv[i], env);
 	if (!cmd)
 	{
 		perror("Did not find path to this command");
 		exit(EXIT_FAILURE);
 	}
-	ft_exec(argv[3], cmd, env);
+	ft_exec(argv[i], cmd, env);
 }

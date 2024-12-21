@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
+/*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yel-mens <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/17 11:11:35 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/21 15:02:57 by yel-mens         ###   ########.fr       */
+/*   Created: 2024/12/21 00:47:30 by yel-mens          #+#    #+#             */
+/*   Updated: 2024/12/21 16:25:07 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,26 +25,43 @@ static void	ft_wait(pid_t pid, int end[2])
 	}
 }
 
+static void	ft_loop(int end[2], int argc, char **argv, char **env)
+{
+	pid_t	pid;
+	int		i;
+
+	i = 2;
+	while (i < argc - 2)
+	{
+		pid = fork();
+		if (!pid)
+		{
+			ft_child_file(end, i, argv);
+			ft_child_process(i, argv, env);
+		}
+		else
+			ft_wait(pid, end);
+		printf("caca");
+		/*
+		else
+		{
+			ft_wait(pid, end);
+			ft_parent_file(end, i + 1, argc, argv);
+			ft_parent_process(i + 1, argv, env);
+		}*/
+		i++;
+	}
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	int		end[2];
-	pid_t	pid;
 
-	if (argc != 5)
+	if (argc < 5)
 		return (EXIT_FAILURE);
 	if (pipe(end) < 0)
 		return (EXIT_FAILURE);
-	pid = fork();
-	if (!pid)
-	{
-		ft_child_file(end, 2, argv);
-		ft_child_process(2, argv, env);
-	}
-	else
-	{
-		ft_wait(pid, end);
-		ft_parent_file(end, 3, argc, argv);
-		ft_parent_process(3, argv, env);
-	}
-	return (EXIT_SUCCESS);
+	ft_loop(end, argc, argv, env);
+	ft_parent_file(end, argc - 2, argc, argv);
+	ft_parent_process(argc - 2, argv, env);
 }
