@@ -3,86 +3,76 @@
 /*                                                        :::      ::::::::   */
 /*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yel-mens <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/17 11:23:12 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/19 14:15:29 by yel-mens         ###   ########.fr       */
+/*   Created: 2024/12/24 10:10:08 by yel-mens          #+#    #+#             */
+/*   Updated: 2024/12/24 13:29:31 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-char	*ft_free_array(char **array)
+static char	*ft_access(char *cmd_name, char **path)
 {
-	int	i;
-
-	if (!array)
-		return (NULL);
-	i = -1;
-	while (array[++i])
-		free(array[i]);
-	free(array);
-	return (NULL);
-}
-
-static char	**ft_get_path(char **env)
-{
-	char	**path;
 	int		i;
-
-	path = NULL;
-	i = 0;
-	while (env[i])
-	{
-		if (!ft_strncmp(env[i], "PATH=", 5))
-		{
-			path = ft_split(env[i] + 5, ':');
-			return (path);
-		}
-		i++;
-	}
-	return (NULL);
-}
-
-static char	*ft_get_valid_path(char **args, char **path)
-{
-	char	*cmd;
 	char	*arg;
-	int		i;
+	char	*cmd_path;
 
-	arg = NULL;
-	cmd = NULL;
 	i = 0;
 	while (path[i])
 	{
-		arg = ft_strjoin("/", args[0]);
-		cmd = ft_strjoin(path[i], arg);
+		arg = ft_strjoin("/", cmd_name);
+		cmd_path = ft_strjoin(path[i], arg);
 		free(arg);
-		if (!access(cmd, X_OK))
-		{
-			free(cmd);
-			return (ft_substr(path[i], 0, ft_strlen(path[i])));
-		}
-		free(cmd);
+		if (!access(cmd_path, X_OK))
+			return (cmd_path);
+		free(cmd_path);
 		i++;
 	}
 	return (NULL);
 }
 
-char	*ft_get_cmd_path(char *cmd, char **env)
+static int	ft_fill_args(char **splited_name, t_cmd *cmd)
 {
-	char	**path;
-	char	**args;
-	char	*path_cmd;
+	int	i;
 
-	path = ft_get_path(env);
-	if (!path)
-		return (NULL);
-	args = ft_split(cmd, ' ');
-	if (!args)
-		return (ft_free_array(path));
-	path_cmd = ft_get_valid_path(args, path);
-	ft_free_array(path);
-	ft_free_array(args);
-	return (path_cmd);
+	i = 0;
+	while (splited_name[++i])
+	{
+		cmd->args[i] = ft_strjoin(splited_name[i], "");
+		if (!(cmd->args[i]))
+		{
+			while (i-- >= -1)
+				free(cmd->args[i]);
+			free(cmd->args);
+			cmd->args = NULL;
+			return (0);
+		}
+	}
+	cmd->args[i] = NULL;
+	return (1);
+}
+
+int	ft_add_args(char *complete_cmd, char **path, t_cmd *cmd)
+{
+	char	**splited_name;
+	int		i;
+
+	while (cmd->next)
+		cmd = cmd->next;
+	splited_name = ft_split(complete_cmd, ' ');
+	i = 0;
+	while (splited_name[i])
+		i++;
+	cmd->args = malloc(sizeof(char *) * i);
+	cmd->args[0] = ft_access(splited_name[0], path);
+	if (!cmd->args[0])
+	{
+		free(cmd->args);
+		cmd->args = NULL;
+		return (0);
+	}
+	if (!ft_fill_args(splited_name, cmd))
+		return (0);
+	return (1);
 }

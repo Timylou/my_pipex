@@ -3,48 +3,77 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yel-mens <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 11:11:35 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/21 15:02:57 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/12/24 13:21:52 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void	ft_wait(pid_t pid, int end[2])
+static int	ft_dup_files(t_cmd *cmd)
 {
-	int		status;
-
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status) && WEXITSTATUS(status))
+	if (dup2(cmd->in, STDIN_FILENO) < 0)
 	{
-		close(end[0]);
-		close(end[1]);
-		exit(EXIT_FAILURE);
+		perror("dup2 to stdin");
+		close(cmd->in);
+		close(cmd->out);
+		return (0);
+	}
+	close(cmd->in);
+	if (dup2(cmd->out, STDOUT_FILENO) < 0)
+	{
+		perror("dup2 to stdout");
+		close(cmd->out);
+		return (0);
+	}
+	close(cmd->out);
+	return (1);
+}
+
+static int	ft_exec(t_cmd *cmd, char **env)
+{
+	if (execve(cmd->args[0], cmd->args, env) < 0)
+		return (0);
+	return (1);
+}
+
+static void	ft_process(t_cmd *cmd, char **env)
+{
+	pid_t	pid;
+
+	while (cmd)
+	{
+		pid = fork();
+		if (!pid)
+		{
+			if (!ft_dup_files(cmd))
+			{
+				ft_free_array(cmd->args);
+				return ;
+			}
+			if (!ft_exec(cmd, env))
+			{
+				ft_free_array(cmd->args);
+				return ;
+			}
+		}
+		cmd = cmd->next;
 	}
 }
 
 int	main(int argc, char **argv, char **env)
 {
-	int		end[2];
-	pid_t	pid;
+	t_cmd	*cmd;
 
-	if (argc != 5)
+	if (argc < 5 || (BONUS == 0 && argc != 5))
 		return (EXIT_FAILURE);
-	if (pipe(end) < 0)
+	cmd = ft_init_struct(argc, argv, env);
+	if (!cmd)
 		return (EXIT_FAILURE);
-	pid = fork();
-	if (!pid)
-	{
-		ft_child_file(end, 2, argv);
-		ft_child_process(2, argv, env);
-	}
-	else
-	{
-		ft_wait(pid, end);
-		ft_parent_file(end, 3, argc, argv);
-		ft_parent_process(3, argv, env);
-	}
-	return (EXIT_SUCCESS);
+	ft_process(cmd, env);
+	ft_free_struct(cmd, ft_split("useless free", ' '));
+	while (wait(NULL))
+		;
 }

@@ -3,102 +3,93 @@
 /*                                                        :::      ::::::::   */
 /*   file.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yel-mens <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/19 12:48:11 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/19 12:48:11 by yel-mens         ###   ########.fr       */
+/*   Created: 2024/12/24 10:47:37 by yel-mens          #+#    #+#             */
+/*   Updated: 2024/12/24 12:41:23 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void	ft_open_infile(int end[2], char **argv)
+static int	ft_open_infile(char **argv, t_cmd *cmd)
 {
-	int	fd;
+	int	end[2];
 
-	close(end[0]);
-	fd = open(argv[1], O_RDONLY);
-	if (fd < 0)
+	cmd->in = open(argv[1], O_RDONLY);
+	if (cmd->in < 0)
 	{
 		perror(argv[1]);
-		close(end[1]);
-		exit(EXIT_FAILURE);
+		return (0);
 	}
-	if (dup2(fd, STDIN_FILENO) < 0)
+	if (pipe(end) < 0)
 	{
-		perror("dup2 fd -> stdin");
-		close(fd);
-		close(end[1]);
-		exit(EXIT_FAILURE);
+		perror("pipe");
+		close(cmd->in);
+		return (0);
 	}
+	cmd->out = end[1];
+	cmd->read_out = end[0];
+	return (1);
 }
 
-static void	ft_open_outfile(int end[2], int argc, char **argv)
+static int	ft_open_pipe(t_cmd *cmd)
 {
-	int	fd;
+	int	in;
+	int	end[2];
 
-	close(end[1]);
-	fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (fd < 0)
+	while (cmd->next)
 	{
-		perror(argv[4]);
-		close(end[0]);
-		exit(EXIT_FAILURE);
+		in = cmd->read_out;
+		cmd = cmd->next;
 	}
-	if (dup2(fd, STDOUT_FILENO) < 0)
+	cmd->in = in;
+	if (pipe(end) < 0)
 	{
-		perror("dup2 fd -> stdout");
-		close(fd);
-		close(end[0]);
-		exit(EXIT_FAILURE);
+		perror("pipe");
+		close(cmd->in);
+		return (0);
 	}
-	close(fd);
+	cmd->out = end[1];
+	cmd->read_out = end[0];
+	return (1);
 }
 
-void	ft_child_file(int end[2], int i, char **argv)
+static int	ft_open_outfile(int argc, char **argv, t_cmd *cmd)
 {
+	int	in;
+
+	while (cmd->next)
+	{
+		in = cmd->read_out;
+		cmd = cmd->next;
+	}
+	cmd->in = in;
+	cmd->out = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (cmd->out < 0)
+	{
+		perror(argv[argc - 1]);
+		close(cmd->in);
+		return (0);
+	}
+	return (1);
+}
+
+int	ft_add_file(int i, int argc, char **argv, t_cmd *cmd)
+{
+	int	success;
+
 	if (i == 2)
-		ft_open_infile(end, argv);
+		success = ft_open_infile(argv, cmd);
+	else if (i < argc - 2)
+		success = ft_open_pipe(cmd);
 	else
+		success = ft_open_outfile(argc, argv, cmd);
+	if (!success)
 	{
-		if (dup2(end[0], STDIN_FILENO) < 0)
-		{
-			perror("dup2 end[0] -> stdin");
-			close(end[1]);
-			close(end[0]);
-			exit(EXIT_FAILURE);
-		}
-		close(end[0]);
+		while (cmd->next)
+			cmd = cmd->next;
+		ft_free_array(cmd->args);
 	}
-	if (dup2(end[1], STDOUT_FILENO) < 0)
-	{
-		perror("dup2 end[1] -> stdout");
-		close(end[1]);
-		exit(EXIT_FAILURE);
-	}
-	close(end[1]);
-}
-
-void	ft_parent_file(int end[2], int i, int argc, char **argv)
-{
-	if (i >= argc - 2)
-		ft_open_outfile(end, argc, argv);
-	else
-	{
-		if (dup2(end[1], STDOUT_FILENO) < 0)
-		{
-			perror("dup2 end[1] -> stdout");
-			close(end[1]);
-			close(end[0]);
-			exit(EXIT_FAILURE);
-		}
-		close(end[1]);
-	}
-	if (dup2(end[0], STDIN_FILENO) < 0)
-	{
-		perror("dup2 end[0] -> stdin");
-		close(end[0]);
-		exit(EXIT_FAILURE);
-	}
-	close(end[0]);
+	return (success);
 }

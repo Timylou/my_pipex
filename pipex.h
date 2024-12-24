@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yel-mens <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 14:37:11 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/21 14:56:57 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/12/24 12:40:20 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,19 @@
 # include <fcntl.h>
 # include <stdio.h>
 # include <sys/wait.h>
+
+# ifndef BONUS
+#  define BONUS 0
+# endif
+
+typedef struct s_cmd
+{
+	char			**args;
+	int				in;
+	int				out;
+	int				read_out;
+	struct s_cmd	*next;
+}	t_cmd;
 
 /* * * * * *
  *	utils  *
@@ -32,11 +45,10 @@ char	*ft_strjoin(char const *s1, char const *s2);
  *	pipex  *
  * * * * * */
 
-void	ft_child_process(int i, char **argv, char **env);
-void	ft_child_file(int end[2], int i, char **argv);
-void	ft_parent_process(int i, char **argv, char **env);
-void	ft_parent_file(int end[2], int i, int argc, char **argv);
-char	*ft_get_cmd_path(char *cmd, char **env);
+t_cmd	*ft_init_struct(int argc, char **argv, char **env);
+int		ft_add_file(int i, int argc, char **argv, t_cmd *cmd);
+int		ft_add_args(char *complete_cmd, char **path, t_cmd *cmd);
 char	*ft_free_array(char **array);
+t_cmd	*ft_free_struct(t_cmd *cmd, char **array);
 
 #endif
