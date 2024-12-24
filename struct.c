@@ -6,7 +6,7 @@
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 19:46:25 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/24 12:43:42 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/12/24 15:43:39 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,5 +98,6 @@ t_cmd	*ft_init_struct(int argc, char **argv, char **env)
 			return (ft_free_struct(cmd, path));
 		i++;
 	}
+	ft_free_array(path);
 	return (cmd);
 }

@@ -6,7 +6,7 @@
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/24 10:10:08 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/24 13:29:31 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/12/24 15:42:04 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,12 @@ static int	ft_fill_args(char **splited_name, t_cmd *cmd)
 				free(cmd->args[i]);
 			free(cmd->args);
 			cmd->args = NULL;
+			ft_free_array(splited_name);
 			return (0);
 		}
 	}
 	cmd->args[i] = NULL;
+	ft_free_array(splited_name);
 	return (1);
 }
 
@@ -64,7 +66,7 @@ int	ft_add_args(char *complete_cmd, char **path, t_cmd *cmd)
 	i = 0;
 	while (splited_name[i])
 		i++;
-	cmd->args = malloc(sizeof(char *) * i);
+	cmd->args = malloc(sizeof(char *) * (i + 1));
 	cmd->args[0] = ft_access(splited_name[0], path);
 	if (!cmd->args[0])
 	{

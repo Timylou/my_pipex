@@ -8,15 +8,14 @@ OBJ	=	$(SRC:.c=.o)
 
 all		:	$(NAME)
 
-bonus: CFLAGS += -DBONUS=1
-bonus: $(OBJ)
-	$(CC) $(OBJ) $(CFLAGS) -o $(NAME)
+bonus	:	CFLAGS += -DBONUS=1
+bonus	:	$(NAME)
 
 $(OBJ)	:	$(SRC)
 	$(CC) $(CFLAGS) -c $^
 
 $(NAME)	:	$(OBJ) $(COBJ)
-	$(CC) $^ -o $@ 
+	$(CC) $(CFLAGS) $^ -o $@ 
 
 clean	:
 	rm -f $(OBJ) $(BOBJ) $(COBJ)

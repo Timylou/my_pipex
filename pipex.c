@@ -6,7 +6,7 @@
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 11:11:35 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/24 13:21:52 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/12/24 15:28:48 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,15 +39,31 @@ static int	ft_exec(t_cmd *cmd, char **env)
 	return (1);
 }
 
+static void	ft_close(t_cmd *all_cmd, t_cmd *cmd)
+{
+	while (all_cmd)
+	{
+		if (all_cmd != cmd)
+		{
+			close(all_cmd->in);
+			close(all_cmd->out);
+		}
+		all_cmd = all_cmd->next;
+	}
+}
+
 static void	ft_process(t_cmd *cmd, char **env)
 {
 	pid_t	pid;
+	t_cmd	*all_cmd;
 
+	all_cmd = cmd;
 	while (cmd)
 	{
 		pid = fork();
 		if (!pid)
 		{
+			ft_close(all_cmd, cmd);
 			if (!ft_dup_files(cmd))
 			{
 				ft_free_array(cmd->args);
@@ -74,6 +90,6 @@ int	main(int argc, char **argv, char **env)
 		return (EXIT_FAILURE);
 	ft_process(cmd, env);
 	ft_free_struct(cmd, ft_split("useless free", ' '));
-	while (wait(NULL))
+	while (wait(NULL) != -1)
 		;
 }
