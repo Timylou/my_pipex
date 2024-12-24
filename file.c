@@ -6,7 +6,7 @@
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/24 10:47:37 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/24 18:04:43 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/12/24 19:20:46 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ static int	ft_open_outfile(int argc, char **argv, t_cmd *cmd)
 	}
 	cmd->in = in;
 	if (!ft_strncmp(argv[1], "here_doc", 8))
-		cmd->out = open(argv[argc - 1], O_WRONLY | O_CREAT, 0644);
+		cmd->out = open(argv[argc - 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else
 		cmd->out = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (cmd->out < 0)
