@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yel-mens <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/24 11:44:58 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/24 13:34:54 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/12/24 19:02:24 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,11 @@ t_cmd	*ft_free_struct(t_cmd *cmd, char **array)
 	{
 		next_cmd = cmd->next;
 		if (cmd->args)
-		{
 			ft_free_array(cmd->args);
+		if (cmd->in >= 0)
 			close(cmd->in);
+		if (cmd->out >= 0)
 			close(cmd->out);
-		}
 		free(cmd);
 		cmd = NULL;
 		cmd = next_cmd;

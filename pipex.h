@@ -6,7 +6,7 @@
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 14:37:11 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/24 12:40:20 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/12/24 19:15:04 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,5 +50,6 @@ int		ft_add_file(int i, int argc, char **argv, t_cmd *cmd);
 int		ft_add_args(char *complete_cmd, char **path, t_cmd *cmd);
 char	*ft_free_array(char **array);
 t_cmd	*ft_free_struct(t_cmd *cmd, char **array);
+int		here_doc(char *limiter, t_cmd *cmd, char **path);
 
 #endif

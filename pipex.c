@@ -6,7 +6,7 @@
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 11:11:35 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/24 15:28:48 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/12/24 18:04:43 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,8 @@ int	main(int argc, char **argv, char **env)
 {
 	t_cmd	*cmd;
 
-	if (argc < 5 || (BONUS == 0 && argc != 5))
+	if (argc < 5 || (BONUS == 0 && argc != 5)
+		|| (!ft_strncmp(argv[1], "here_doc", 8) && argc < 6))
 		return (EXIT_FAILURE);
 	cmd = ft_init_struct(argc, argv, env);
 	if (!cmd)

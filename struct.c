@@ -6,7 +6,7 @@
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 19:46:25 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/24 15:43:39 by yel-mens         ###   ########.fr       */
+/*   Updated: 2024/12/24 19:14:53 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,13 +64,22 @@ static int	ft_add_end(t_cmd *cmd)
 static t_cmd	*ft_first_cmd(int argc, char **argv, char **path)
 {
 	t_cmd	*cmd;
+	int		is_here_doc;
 
+	is_here_doc = 0;
+	if (!ft_strncmp(argv[1], "here_doc", 8))
+		is_here_doc = 1;
 	cmd = ft_add_struct();
 	if (!cmd)
 		return (NULL);
-	if (!ft_add_args(argv[2], path, cmd))
+	if (!ft_add_args(argv[2 + is_here_doc], path, cmd))
 		return (NULL);
-	if (!ft_add_file(2, argc, argv, cmd))
+	if (is_here_doc)
+	{
+		if (!here_doc(argv[2], cmd, path))
+			return (NULL);
+	}
+	else if (!ft_add_file(2, argc, argv, cmd))
 		return (NULL);
 	return (cmd);
 }
