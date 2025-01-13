@@ -6,7 +6,7 @@
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/24 10:10:08 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/24 15:42:04 by yel-mens         ###   ########.fr       */
+/*   Updated: 2025/01/13 14:00:26 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ static char	*ft_access(char *cmd_name, char **path)
 		free(cmd_path);
 		i++;
 	}
+	if (!access(cmd_name, X_OK))
+		return (ft_strjoin(cmd_name, ""));
+	perror(cmd_name);
 	return (NULL);
 }
 
@@ -72,6 +75,7 @@ int	ft_add_args(char *complete_cmd, char **path, t_cmd *cmd)
 	{
 		free(cmd->args);
 		cmd->args = NULL;
+		ft_free_array(splited_name);
 		return (0);
 	}
 	if (!ft_fill_args(splited_name, cmd))
