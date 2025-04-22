@@ -6,7 +6,7 @@
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 19:46:25 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/24 19:14:53 by yel-mens         ###   ########.fr       */
+/*   Updated: 2025/04/22 14:05:50 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ static char	**ft_get_path(char **env)
 		}
 		i++;
 	}
-	return (NULL);
+	path = malloc(sizeof(char *));
+	path[0] = NULL;
+	return (path);
 }
 
 static t_cmd	*ft_add_struct(void)
@@ -72,15 +74,18 @@ static t_cmd	*ft_first_cmd(int argc, char **argv, char **path)
 	cmd = ft_add_struct();
 	if (!cmd)
 		return (NULL);
-	if (!ft_add_args(argv[2 + is_here_doc], path, cmd))
-		return (NULL);
+	else if (!ft_add_file(2, argc, argv, cmd))
+		return (ft_free_struct(cmd, path));
+	if (cmd->in < 0)
+		cmd->args = NULL;
+	else if (!ft_add_args(argv[2 + is_here_doc], path, cmd))
+		return (ft_free_struct(cmd, path));
 	if (is_here_doc)
 	{
 		if (!here_doc(argv[2], cmd, path))
-			return (NULL);
+			return (ft_free_struct(cmd, path));
 	}
-	else if (!ft_add_file(2, argc, argv, cmd))
-		return (NULL);
+	
 	return (cmd);
 }
 
@@ -95,16 +100,14 @@ t_cmd	*ft_init_struct(int argc, char **argv, char **env)
 		return (NULL);
 	cmd = ft_first_cmd(argc, argv, path);
 	if (!cmd)
-		return (ft_free_struct(cmd, path));
+		return (ft_free_struct(cmd, ft_split("useless str ...", ' ')));
 	i = 3;
 	while (i < argc - 1)
 	{
 		if (!ft_add_end(cmd))
 			return (ft_free_struct(cmd, path));
-		if (!ft_add_args(argv[i], path, cmd))
-			return (ft_free_struct(cmd, path));
-		if (!ft_add_file(i, argc, argv, cmd))
-			return (ft_free_struct(cmd, path));
+		ft_add_args(argv[i], path, cmd);
+		ft_add_file(i, argc, argv, cmd);
 		i++;
 	}
 	ft_free_array(path);

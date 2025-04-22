@@ -6,7 +6,7 @@
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/24 11:44:58 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/24 19:02:24 by yel-mens         ###   ########.fr       */
+/*   Updated: 2025/04/22 14:29:16 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ char	*ft_free_array(char **array)
 {
 	int	i;
 
+	if (!array)
+		return (NULL);
 	i = 0;
 	while (array[i])
 	{
@@ -41,6 +43,8 @@ t_cmd	*ft_free_struct(t_cmd *cmd, char **array)
 			close(cmd->in);
 		if (cmd->out >= 0)
 			close(cmd->out);
+		if (next_cmd && next_cmd->in < 0)
+			close(cmd->read_out);
 		free(cmd);
 		cmd = NULL;
 		cmd = next_cmd;

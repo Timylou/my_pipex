@@ -6,7 +6,7 @@
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 11:11:35 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/24 18:04:43 by yel-mens         ###   ########.fr       */
+/*   Updated: 2025/04/22 14:39:29 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,34 @@
 
 static int	ft_dup_files(t_cmd *cmd)
 {
-	if (dup2(cmd->in, STDIN_FILENO) < 0)
+	if (cmd->in >= 0)
 	{
-		perror("dup2 to stdin");
+		if (dup2(cmd->in, STDIN_FILENO) < 0)
+		{
+			perror("dup2 to stdin");
+			close(cmd->in);
+			close(cmd->out);
+			return (0);
+		}
 		close(cmd->in);
-		close(cmd->out);
-		return (0);
 	}
-	close(cmd->in);
-	if (dup2(cmd->out, STDOUT_FILENO) < 0)
+	if (cmd->out >= 0)
 	{
-		perror("dup2 to stdout");
+		if (dup2(cmd->out, STDOUT_FILENO) < 0)
+		{
+			perror("dup2 to stdout");
+			close(cmd->out);
+			return (0);
+		}
 		close(cmd->out);
-		return (0);
 	}
-	close(cmd->out);
 	return (1);
 }
 
 static int	ft_exec(t_cmd *cmd, char **env)
 {
+	if (!cmd->args)
+		return (0);
 	if (execve(cmd->args[0], cmd->args, env) < 0)
 		return (0);
 	return (1);
@@ -45,8 +53,10 @@ static void	ft_close(t_cmd *all_cmd, t_cmd *cmd)
 	{
 		if (all_cmd != cmd)
 		{
-			close(all_cmd->in);
-			close(all_cmd->out);
+			if (all_cmd->in >= 0)
+				close(all_cmd->in);
+			if (all_cmd->out >= 0)
+				close(all_cmd->out);
 		}
 		all_cmd = all_cmd->next;
 	}
@@ -61,6 +71,8 @@ static void	ft_process(t_cmd *cmd, char **env)
 	while (cmd)
 	{
 		pid = fork();
+		if (pid < 0)
+			return ;
 		if (!pid)
 		{
 			ft_close(all_cmd, cmd);
@@ -71,8 +83,8 @@ static void	ft_process(t_cmd *cmd, char **env)
 			}
 			if (!ft_exec(cmd, env))
 			{
-				ft_free_array(cmd->args);
-				return ;
+				ft_free_struct(all_cmd, ft_split("useless free", ' '));
+				exit(EXIT_FAILURE);
 			}
 		}
 		cmd = cmd->next;

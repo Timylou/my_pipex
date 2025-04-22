@@ -6,7 +6,7 @@
 /*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/24 10:47:37 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/24 19:20:46 by yel-mens         ###   ########.fr       */
+/*   Updated: 2025/04/22 13:37:07 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,7 @@ static int	ft_open_infile(char **argv, t_cmd *cmd)
 
 	cmd->in = open(argv[1], O_RDONLY);
 	if (cmd->in < 0)
-	{
 		perror(argv[1]);
-		return (0);
-	}
 	if (pipe(end) < 0)
 	{
 		perror("pipe");
@@ -70,11 +67,7 @@ static int	ft_open_outfile(int argc, char **argv, t_cmd *cmd)
 	else
 		cmd->out = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (cmd->out < 0)
-	{
 		perror(argv[argc - 1]);
-		close(cmd->in);
-		return (0);
-	}
 	return (1);
 }
 
@@ -88,11 +81,5 @@ int	ft_add_file(int i, int argc, char **argv, t_cmd *cmd)
 		success = ft_open_pipe(cmd);
 	else
 		success = ft_open_outfile(argc, argv, cmd);
-	if (!success)
-	{
-		while (cmd->next)
-			cmd = cmd->next;
-		ft_free_array(cmd->args);
-	}
 	return (success);
 }
