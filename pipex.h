@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yel-mens <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 14:37:11 by yel-mens          #+#    #+#             */
-/*   Updated: 2024/12/24 19:15:04 by yel-mens         ###   ########.fr       */
+/*   Updated: 2025/04/27 19:20:31 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ typedef struct s_cmd
  * * * * * */
 
 char	**ft_split(char const *str, char sep);
+char	**smart_split(const char *s);
+void	remove_quotes_tab(char **tab);
 int		ft_strncmp(const char *s1, const char *s2, size_t n);
 size_t	ft_strlen(const char *str);
 char	*ft_substr(const char *str, unsigned int start, size_t len);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yel-mens <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/24 10:10:08 by yel-mens          #+#    #+#             */
-/*   Updated: 2025/01/13 14:00:26 by yel-mens         ###   ########.fr       */
+/*   Updated: 2025/04/27 19:26:02 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,8 @@ int	ft_add_args(char *complete_cmd, char **path, t_cmd *cmd)
 
 	while (cmd->next)
 		cmd = cmd->next;
-	splited_name = ft_split(complete_cmd, ' ');
+	splited_name = smart_split(complete_cmd);
+	remove_quotes_tab(splited_name);
 	i = 0;
 	while (splited_name[i])
 		i++;

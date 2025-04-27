@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: yel-mens <yel-mens@student.42.fr>          +#+  +:+       +#+        */
+/*   By: yel-mens <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 19:46:25 by yel-mens          #+#    #+#             */
-/*   Updated: 2025/04/22 14:05:50 by yel-mens         ###   ########.fr       */
+/*   Updated: 2025/04/23 13:04:48 by yel-mens         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,15 +77,13 @@ static t_cmd	*ft_first_cmd(int argc, char **argv, char **path)
 	else if (!ft_add_file(2, argc, argv, cmd))
 		return (ft_free_struct(cmd, path));
 	if (cmd->in < 0)
-		cmd->args = NULL;
-	else if (!ft_add_args(argv[2 + is_here_doc], path, cmd))
-		return (ft_free_struct(cmd, path));
+		return (cmd);
+	ft_add_args(argv[2 + is_here_doc], path, cmd);
 	if (is_here_doc)
 	{
 		if (!here_doc(argv[2], cmd, path))
 			return (ft_free_struct(cmd, path));
 	}
-	
 	return (cmd);
 }
 
